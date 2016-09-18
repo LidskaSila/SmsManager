@@ -41,7 +41,7 @@ class SmsManager
 	/**
 	 * @param Sms $sms
 	 *
-	 * @return array|bool
+	 * @return Response|bool
 	 * @throws SmsException
 	 * @throws SmsManagerException
 	 */
@@ -60,7 +60,7 @@ class SmsManager
 					],
 				]);
 
-				return $this->getResponseData($response);
+				return $this->buildResponseData($response);
 			} catch (ClientException $e) {
 				$response = Parser::parseXmlResponseBody($e->getResponse());
 
@@ -125,27 +125,41 @@ class SmsManager
 	/**
 	 * @param ResponseInterface $response
 	 *
-	 * @return array
+	 * @return Response
 	 */
-	protected function getResponseData($response)
+	protected function buildResponseData(ResponseInterface $response)
 	{
-		$xml      = new \SimpleXMLElement((string) $response->getBody());
-		$requests = [];
-		foreach ($xml->ResponseRequestList->ResponseRequest as $request) {
-			$data = [
-				'RequestID'   => (int) $request->RequestID,
-				'SmsCount'    => (int) $request['SmsCount'],
-				'SmsPrice'    => (float) $request['SmsPrice'],
-				'CustomID'    => (int) $request->CustomID,
-				'Status'      => (int) $xml->Response['ID'],
-				'NumbersList' => [],
-			];
-			foreach ($request->ResponseNumbersList->Number as $number) {
-				$data['NumbersList'][] = (string) $number;
+		$result = new \SimpleXMLElement((string) $response->getBody());
+
+		$responseId   = (int) $result->Response['ID'];
+		$responseType = (string) $result->Response['Type'];
+
+		$response = new Response();
+		$response->setId($responseId);
+		$response->setType($responseType);
+
+		/** @var \SimpleXMLElement $responseRequestList */
+		$responseRequestList = $result->ResponseRequestList;
+
+		foreach ($responseRequestList->ResponseRequest as $request) {
+			$responseRequest = new ResponseRequest();
+			$responseRequest->setRequestId((int) $request->RequestID);
+
+			$responseRequest->setSmsCount((int) $request['SmsCount']);
+			$responseRequest->setSmsPrice((float) $request['SmsPrice']);
+
+			$responseRequest->setCustomId((int) $request->CustomID);
+
+			/** @var \SimpleXMLElement $responseNumbersList */
+			$responseNumbersList = $request->ResponseNumbersList;
+			foreach ($responseNumbersList->Number as $phoneNumber) {
+				$responseRequest->addNumber((string) $phoneNumber);
 			}
-			$requests[$data['RequestID']] = $data;
+
+			$response->addResponseRequest($responseRequest);
 		}
 
-		return $requests;
+		return $response;
 	}
+
 }

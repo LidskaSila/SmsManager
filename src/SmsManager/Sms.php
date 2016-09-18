@@ -23,22 +23,6 @@ class Sms
 	protected $sender;
 
 	/**
-	 * Sms constructor.
-	 *
-	 * @param string $message
-	 * @param array  $recipients
-	 * @param string $type
-	 */
-	public function __construct(string $message, array $recipients, string $type = null)
-	{
-		$this->message    = $message;
-		$this->recipients = $recipients;
-		if ($type) {
-			$this->type = $type;
-		}
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getMessage()
