@@ -19,3 +19,12 @@ Usage
 -----
 
 Pass `Sms` object to `SmsManager` `sendSms()` method. `Sms` object should include all data like message, message type, receipients or sender.
+
+### Usage with Nette
+Register it as a service, then you can autowire it.
+```neon
+smsManager:
+    class: LidskaSila\SmsManager\SmsManager
+    setup:
+        - setAuth(%smsManager.username%, %smsManager.token%)
+```
