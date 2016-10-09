@@ -2,12 +2,12 @@
 
 namespace LidskaSila\SmsManager;
 
-use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
 class Parser
 {
 
-	public static function parseXmlResponseBody(Response $response, array $config = [])
+	public static function parseXmlResponseBody(GuzzleResponse $response, array $config = [])
 	{
 		$disableEntities = libxml_disable_entity_loader(true);
 		$internalErrors  = libxml_use_internal_errors(true);
