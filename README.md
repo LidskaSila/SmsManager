@@ -1,6 +1,8 @@
 SmsManager PHP Library
 ======================
 
+[![Downloads this Month](https://img.shields.io/packagist/dm/lidskasila/sms-manager.svg)](https://packagist.org/packages/lidskasila/sms-manager)
+
 Library for PHP that can send SMS via SmsManager.cz gateway. _(not all API methods are implemented for now)_
 
 Requirements
