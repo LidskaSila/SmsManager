@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace LidskaSila\SmsManager;
 
@@ -20,44 +20,29 @@ class Response
 	/** @var ResponseRequest[] */
 	protected $responseRequests = [];
 
-	/**
-	 * @return int
-	 */
-	public function getId()
-	{
-		return $this->id;
-	}
-
-	/**
-	 * @param int $id
-	 */
-	public function setId($id)
+	public function __construct($id, $type)
 	{
 		$this->id = $id;
-	}
 
-	/**
-	 * @return string
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * @param string $type
-	 */
-	public function setType($type)
-	{
 		$this->isOk = $type === self::STATUS_OK;
 
 		$this->type = $type;
 	}
 
+	public function getId(): int
+	{
+		return $this->id;
+	}
+
+	public function getType(): string
+	{
+		return $this->type;
+	}
+
 	/**
 	 * @param ResponseRequest $responseRequest
 	 */
-	public function addResponseRequest(ResponseRequest $responseRequest)
+	public function addResponseRequest(ResponseRequest $responseRequest): void
 	{
 		$this->responseRequests[] = $responseRequest;
 	}
@@ -65,17 +50,8 @@ class Response
 	/**
 	 * @return ResponseRequest[]
 	 */
-	public function getResponseRequests()
+	public function getResponseRequests(): array
 	{
 		return $this->responseRequests;
 	}
-
-	/**
-	 * @param ResponseRequest[] $responseRequests
-	 */
-	public function setResponseRequests($responseRequests)
-	{
-		$this->responseRequests = $responseRequests;
-	}
-
 }

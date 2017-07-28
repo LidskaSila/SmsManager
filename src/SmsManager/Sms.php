@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace LidskaSila\SmsManager;
 
@@ -14,76 +14,48 @@ class Sms
 	protected $message;
 
 	/** @var string */
-	protected $type = self::REQUEST_TYPE_DEFAULT;
+	protected $type;
 
 	/** @var array */
 	protected $recipients = [];
 
-	/** @var string|null */
+	/** @var string */
 	protected $sender;
 
-	/**
-	 * @return string
-	 */
-	public function getMessage()
+	public function __construct(string $message, ?string $type, string $sender, array $recipients)
+	{
+		$this->message = $message;
+
+		if ($type === null) {
+			$type = self::REQUEST_TYPE_DEFAULT;
+		}
+		$this->type       = $type;
+		$this->sender     = $sender;
+		$this->recipients = $recipients;
+	}
+
+	public function getMessage(): string
 	{
 		return $this->message;
 	}
 
-	/**
-	 * @param string $message
-	 */
-	public function setMessage($message)
-	{
-		$this->message = $message;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getType()
+	public function getType(): string
 	{
 		return $this->type;
 	}
 
-	/**
-	 * @param string $type
-	 */
-	public function setType($type)
-	{
-		$this->type = $type;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getRecipients()
+	public function getRecipients(): array
 	{
 		return $this->recipients;
 	}
 
-	/**
-	 * @param array $recipients
-	 */
-	public function setRecipients($recipients)
-	{
-		$this->recipients = $recipients;
-	}
-
-	/**
-	 * @return null|string
-	 */
-	public function getSender()
+	public function getSender(): string
 	{
 		return $this->sender;
 	}
 
-	/**
-	 * @param null|string $sender
-	 */
-	public function setSender($sender)
+	public function setRecipients(array $recipients): void
 	{
-		$this->sender = $sender;
+		$this->recipients = $recipients;
 	}
-
 }

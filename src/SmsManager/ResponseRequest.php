@@ -1,14 +1,14 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace LidskaSila\SmsManager;
 
 class ResponseRequest
 {
 
-	/** @var string */
+	/** @var int */
 	protected $requestId;
 
-	/** @var string */
+	/** @var int */
 	protected $customId;
 
 	/** @var array */
@@ -20,92 +20,41 @@ class ResponseRequest
 	/** @var float */
 	protected $smsPrice;
 
-	/**
-	 * @return string
-	 */
-	public function getRequestId()
+	public function __construct(int $requestId, int $customId, int $smsCount, float $smsPrice)
+	{
+		$this->requestId = $requestId;
+		$this->customId  = $customId;
+		$this->smsCount  = $smsCount;
+		$this->smsPrice  = $smsPrice;
+	}
+
+	public function getRequestId(): int
 	{
 		return $this->requestId;
 	}
 
-	/**
-	 * @param string $requestId
-	 */
-	public function setRequestId($requestId)
-	{
-		$this->requestId = $requestId;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getCustomId()
+	public function getCustomId(): int
 	{
 		return $this->customId;
 	}
 
-	/**
-	 * @param string $customId
-	 */
-	public function setCustomId($customId)
-	{
-		$this->customId = $customId;
-	}
-
-	/**
-	 * @param string $number
-	 */
-	public function addNumber(string $number)
+	public function addNumber(string $number): void
 	{
 		$this->numbers[] = $number;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getNumbers()
+	public function getNumbers(): array
 	{
 		return $this->numbers;
 	}
 
-	/**
-	 * @param array $numbers
-	 */
-	public function setNumbers($numbers)
-	{
-		$this->numbers = $numbers;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getSmsCount()
+	public function getSmsCount(): int
 	{
 		return $this->smsCount;
 	}
 
-	/**
-	 * @param int $smsCount
-	 */
-	public function setSmsCount($smsCount)
-	{
-		$this->smsCount = $smsCount;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getSmsPrice()
+	public function getSmsPrice(): float
 	{
 		return $this->smsPrice;
 	}
-
-	/**
-	 * @param float $smsPrice
-	 */
-	public function setSmsPrice($smsPrice)
-	{
-		$this->smsPrice = $smsPrice;
-	}
-
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace LidskaSila\SmsManager;
 
@@ -11,28 +11,27 @@ class SmsManager
 {
 
 	const XML_BASE_PATH = 'http://xml-api.smsmanager.cz/';
-
 	const XML_PATH_SEND = 'Send';
 
 	/** @var string */
 	protected $username;
+
 	/** @var string */
 	protected $password;
+
 	/** @var array */
 	protected $xmlClient;
 
 	public function __construct()
 	{
-		$this->xmlClient = new Client([
-			'base_uri' => self::XML_BASE_PATH,
-		]);
+		$this->xmlClient = new Client(
+			[
+				'base_uri' => self::XML_BASE_PATH,
+			]
+		);
 	}
 
-	/**
-	 * @param string $username
-	 * @param string $password
-	 */
-	public function setAuth(string $username, string $password)
+	public function setAuth(string $username, string $password): void
 	{
 		$this->username = $username;
 		$this->password = $password;
@@ -51,23 +50,30 @@ class SmsManager
 
 		if ($xml) {
 			try {
-				$response = $this->xmlClient->post(self::XML_PATH_SEND, [
-					'multipart' => [
-						[
-							'name'     => 'XMLDATA',
-							'contents' => $xml,
+				$response = $this->xmlClient->post(
+					self::XML_PATH_SEND,
+					[
+						'multipart' => [
+							[
+								'name'     => 'XMLDATA',
+								'contents' => $xml,
+							],
 						],
-					],
-				]);
+					]
+				);
 
 				return $this->buildResponseData($response);
 			} catch (ClientException $e) {
 				$response = Parser::parseXmlResponseBody($e->getResponse());
 
-				throw new SmsManagerException((string) $response->Response[0]);
+				/** @noinspection PhpUndefinedFieldInspection */
+				throw new SmsManagerException(
+					implode(', ', $sms->getRecipients()) . ': ' . (string) $response->Response[0]
+				);
 			} catch (ServerException $e) {
 				$response = Parser::parseXmlResponseBody($e->getResponse());
 
+				/** @noinspection PhpUndefinedFieldInspection */
 				throw new SmsManagerException((string) $response->Response[0]);
 			}
 		}
@@ -75,14 +81,7 @@ class SmsManager
 		return false;
 	}
 
-	/**
-	 * @param Sms $sms
-	 *
-	 * @return null|string
-	 *
-	 * @throws SmsException
-	 */
-	protected function buildXml(Sms $sms)
+	protected function buildXml(Sms $sms): ?string
 	{
 		$xml           = new \SimpleXMLElement('<RequestDocument/>');
 		$requestHeader = $xml->addChild('RequestHeader');
@@ -122,36 +121,35 @@ class SmsManager
 		return $hasAnyNumber ? $xml : null;
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 *
-	 * @return Response
-	 */
-	protected function buildResponseData(ResponseInterface $response)
+	protected function buildResponseData(ResponseInterface $response): Response
 	{
 		$result = new \SimpleXMLElement((string) $response->getBody());
 
-		$responseId   = (int) $result->Response['ID'];
+		/** @noinspection PhpUndefinedFieldInspection */
+		$responseId = (int) $result->Response['ID'];
+		/** @noinspection PhpUndefinedFieldInspection */
 		$responseType = (string) $result->Response['Type'];
 
-		$response = new Response();
-		$response->setId($responseId);
-		$response->setType($responseType);
+		$response = new Response($responseId, $responseType);
 
 		/** @var \SimpleXMLElement $responseRequestList */
+		/** @noinspection PhpUndefinedFieldInspection */
 		$responseRequestList = $result->ResponseRequestList;
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		foreach ($responseRequestList->ResponseRequest as $request) {
-			$responseRequest = new ResponseRequest();
-			$responseRequest->setRequestId((int) $request->RequestID);
-
-			$responseRequest->setSmsCount((int) $request['SmsCount']);
-			$responseRequest->setSmsPrice((float) $request['SmsPrice']);
-
-			$responseRequest->setCustomId((int) $request->CustomID);
+			/** @noinspection PhpUndefinedFieldInspection */
+			$responseRequest = new ResponseRequest(
+				(int) $request->RequestID,
+				(int) $request->CustomID,
+				(int) $request['SmsCount'],
+				(float) $request['SmsPrice']
+			);
 
 			/** @var \SimpleXMLElement $responseNumbersList */
+			/** @noinspection PhpUndefinedFieldInspection */
 			$responseNumbersList = $request->ResponseNumbersList;
+			/** @noinspection PhpUndefinedFieldInspection */
 			foreach ($responseNumbersList->Number as $phoneNumber) {
 				$responseRequest->addNumber((string) $phoneNumber);
 			}
@@ -161,5 +159,4 @@ class SmsManager
 
 		return $response;
 	}
-
 }

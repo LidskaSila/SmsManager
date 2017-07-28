@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace LidskaSila\SmsManager;
 
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Psr\Http\Message\ResponseInterface;
 
 class Parser
 {
 
-	public static function parseXmlResponseBody(GuzzleResponse $response, array $config = [])
+	public static function parseXmlResponseBody(ResponseInterface $response, array $config = []): \SimpleXMLElement
 	{
-		$disableEntities = libxml_disable_entity_loader(true);
+		$disableEntities = libxml_disable_entity_loader();
 		$internalErrors  = libxml_use_internal_errors(true);
 		try {
 			// Allow XML to be retrieved even if there is no response body
@@ -28,8 +28,7 @@ class Parser
 			throw new XmlParseException(
 				'Unable to parse response body into XML: ' . $e->getMessage(),
 				$response,
-				$e,
-				libxml_get_last_error() ?: null
+				$e
 			);
 		}
 
