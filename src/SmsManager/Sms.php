@@ -29,8 +29,21 @@ class Sms
 		if ($type === null) {
 			$type = self::REQUEST_TYPE_DEFAULT;
 		}
-		$this->type       = $type;
-		$this->sender     = $sender;
+		$this->type   = $type;
+		$this->sender = $sender;
+
+		foreach ($recipients as $recipient) {
+
+			if (!
+			(
+				preg_match('/^\+420(?:(?:60[1-8]|7(?:0[2-5]|[2379]\d))\d{6})$/', $recipient) ||
+				preg_match('/^\+4219(?:0(?:[1-8]\d|9[1-9])|(?:1[0-24-9]|4[04589]|50)\d)\d{5}$/', $recipient)
+			)
+			) {
+				throw new InvalidNumberException($recipient);
+			}
+		}
+
 		$this->recipients = $recipients;
 	}
 
@@ -52,10 +65,5 @@ class Sms
 	public function getSender(): string
 	{
 		return $this->sender;
-	}
-
-	public function setRecipients(array $recipients): void
-	{
-		$this->recipients = $recipients;
 	}
 }
