@@ -19,10 +19,10 @@ class Sms
 	/** @var array */
 	protected $recipients = [];
 
-	/** @var string */
+	/** @var string|null */
 	protected $sender;
 
-	public function __construct(string $message, ?string $type, string $sender, array $recipients)
+	public function __construct(string $message, ?string $type, array $recipients, ?string $sender = null)
 	{
 		$this->message = $message;
 
@@ -65,7 +65,7 @@ class Sms
 		return $this->recipients;
 	}
 
-	public function getSender(): string
+	public function getSender(): ?string
 	{
 		return $this->sender;
 	}
