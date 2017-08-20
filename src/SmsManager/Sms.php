@@ -22,7 +22,7 @@ class Sms
 	/** @var string|null */
 	protected $sender;
 
-	/** @var string|null */
+	/** @var int|null */
 	protected $customID;
 
 	public function __construct(string $message, ?string $type, array $recipients, ?string $sender = null, ?int $customID = null)
@@ -34,7 +34,7 @@ class Sms
 		}
 		$this->type   = $type;
 		$this->sender = $sender;
-		$this->customID = $customId;
+		$this->customID = $customID;
 
 		foreach ($recipients as $recipient) {
 
