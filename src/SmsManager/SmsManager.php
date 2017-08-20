@@ -101,6 +101,11 @@ class SmsManager
 				->addAttribute('Sender', $sms->getSender());
 		}
 
+		if ($sms->getCustomID()) {
+			$request
+				->addAttribute('CustomID', $sms->getCustomID());
+		}
+
 		//set message
 		$request->addChild('Message', $sms->getMessage())->addAttribute('Type', 'Text');
 
