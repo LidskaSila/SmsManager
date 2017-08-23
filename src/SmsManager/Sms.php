@@ -22,7 +22,10 @@ class Sms
 	/** @var string|null */
 	protected $sender;
 
-	public function __construct(string $message, ?string $type, array $recipients, ?string $sender = null)
+	/** @var int|null */
+	protected $customID;
+
+	public function __construct(string $message, ?string $type, array $recipients, ?string $sender = null, ?int $customID = null)
 	{
 		$this->message = $message;
 
@@ -31,6 +34,7 @@ class Sms
 		}
 		$this->type   = $type;
 		$this->sender = $sender;
+		$this->customID = $customID;
 
 		foreach ($recipients as $recipient) {
 
@@ -68,5 +72,10 @@ class Sms
 	public function getSender(): ?string
 	{
 		return $this->sender;
+	}
+
+	public function getCustomID(): ?int
+	{
+		return $this->customID;
 	}
 }
