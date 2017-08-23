@@ -103,7 +103,7 @@ class SmsManager
 
 		if ($sms->getCustomID()) {
 			$request
-				->addAttribute('CustomID', $sms->getCustomID());
+				->addAttribute('CustomID', (string)$sms->getCustomID());
 		}
 
 		//set message
